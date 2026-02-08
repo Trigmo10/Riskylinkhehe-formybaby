@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Happy Rose Day 🌻</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  overflow-x: hidden;
+  color: #333;
+  scroll-behavior: smooth;
+
+}
+
+/* 🌈 Background */
+#page-bg {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(180deg, #fff3b0, #ffd6e0);
+  z-index: -2;
+}
+
+#questionPage {
+  background: radial-gradient(circle at top, #fff1c1, #ffd6e0);
+}
+
+/* 🌻 Floating flowers */
+#flowers-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.flower {
+  position: absolute;
+  opacity: 0.45;
+  animation: floatUp linear infinite;
+}
+
+@keyframes floatUp {
+  from {
+    transform: translateY(110vh) translateX(0) rotate(0deg);
+  }
+  to {
+    transform: translateY(-130vh) translateX(var(--drift)) rotate(360deg);
+  }
+}
+
+/* 🧩 Sections */
+section {
+  min-height: 100vh;
+  padding: 60px 20px;
+  max-width: 1100px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+
+section.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Typography */
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 44px;
+  color: #e63946;
+}
+
+h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 30px;
+  color: #5f0f40;
+  margin-bottom: 10px;
+}
+
+p {
+  font-size: 17px;
+  line-height: 1.65;
+  max-width: 720px;
+  margin: 10px auto;
+}
+
+.sunflower-big {
+  font-size: 72px;
+  margin: 15px 0;
+}
+
+.divider {
+  width: 70px;
+  height: 3px;
+  background: #ffb703;
+  margin: 25px auto;
+  border-radius: 10px;
+}
+
+/* Photos */
+.photos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+  margin-top: 30px;
+}
+
+.photos img {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  border-radius: 18px;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.25);
+}
+
+/* Intro text */
+.intro-text {
+  font-size: 18px;
+  font-style: italic;
+  opacity: 0.9;
+}
+
+.anyways {
+  display: inline-block;
+  margin-top: 10px;
+  animation: sway 2.5s ease-in-out infinite;
+}
+
+@keyframes sway {
+  0% { transform: translateY(0); opacity: 0.8; }
+  50% { transform: translateY(-4px); opacity: 1; }
+  100% { transform: translateY(0); opacity: 0.8; }
+}
+
+/* Button */
+.next-btn {
+  margin-top: 40px;
+  padding: 14px 38px;
+  font-size: 16px;
+  border: none;
+  border-radius: 40px;
+  background: #ffb703;
+  cursor: pointer;
+}
+
+.next-btn:hover {
+  transform: scale(1.06);
+}
+
+/* 💘 Yes / No section */
+.choice-box {
+  position: relative;
+  height: 120px;
+}
+
+.choice {
+  padding: 14px 34px;
+  font-size: 16px;
+  border: none;
+  border-radius: 40px;
+  cursor: pointer;
+  position: absolute;
+  transition: transform 0.25s ease;
+}
+
+.yes {
+  background: #ff4d6d;
+  color: white;
+  left: 50%;
+  transform: translateX(-120%);
+}
+
+.no {
+  background: #adb5bd;
+  color: #333;
+  left: 50%;
+  transform: translateX(20%);
+}
+
+button {
+  min-width: 140px;
+  min-height: 48px;
+  font-size: 1rem;
+-webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+button:focus-visible {
+  outline: 3px solid #ffb703;
+  outline-offset: 4px;
+}
+
+/* ❌ Wrong choice modal */
+#wrongChoice {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.wrong-card {
+  background: #fff;
+  padding: 30px 25px;
+  border-radius: 20px;
+  text-align: center;
+  max-width: 300px;
+  animation: pop 0.4s ease;
+}
+
+@keyframes pop {
+  from { transform: scale(0.7); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.wrong-card button {
+  margin-top: 20px;
+  padding: 10px 26px;
+  border-radius: 30px;
+  border: none;
+  background: #ffb703;
+  cursor: pointer;
+}
+
+.page {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  overflow-y: auto;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.8s ease;
+}
+
+.page.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.explosion {
+  position: fixed;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.explosion span {
+  position: absolute;
+  font-size: 28px;
+  animation: pop 1.2s ease-out forwards;
+}
+
+@keyframes pop {
+  0% {
+    transform: translate(0, 0) scale(0.3);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--x), var(--y)) scale(1.2);
+    opacity: 0;
+  }
+}
+
+#romanticPage {
+  background: radial-gradient(circle at top, #fff8d6, #ffccd5);
+}
+
+#romanticPage h1 {
+  color: #c9184a;
+}
+
+#romanticPage p {
+  font-size: 18px;
+}
+
+/* 💕 Floating hearts (romantic page only) */
+#hearts-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  display: none;
+}
+
+#romanticPage.active #hearts-bg {
+  display: block;
+}
+
+.heart {
+  position: absolute;
+  font-size: 26px;
+  opacity: 0.5;
+  animation: floatHeart linear infinite;
+}
+
+@keyframes floatHeart {
+  from {
+    transform: translateY(110vh) translateX(0) scale(0.8);
+  }
+  to {
+    transform: translateY(-130vh) translateX(var(--drift)) scale(1.2);
+  }
+}
+
+
+</style>
+</head>
+
+<body>
+
+
+
+<div id="rosePage" class="page active">
+
+
+<div id="page-bg"></div>
+<div id="flowers-bg"></div>
+
+
+<!-- 👀 INTRO -->
+<section>
+  <p class="intro-text">
+    Awwww I see that you clicked on the unknown and risky looking link I sent you… <br><br>mai samaj raha hu ekdum☝️<br><br>
+    (it seems you do trust me a lot 😁)<br><br>
+    <span class="anyways">Anywaysss…</span>
+  </p>
+</section>
+
+<!-- 🌹 ROSE DAY -->
+<section>
+  <h1>Happy Rose Day 🌹</h1>
+  <div class="sunflower-big">🌻</div>
+
+  <p>
+    I know today is Rose Day…<br>
+    but just because it’s <b>rose</b> day doesn’t mean<br>
+    you won’t get your favourite flowers 🌻💛
+  </p>
+
+  <div class="divider"></div>
+
+  <p><i>Cause you deserve your favourite flowers baby. You are someone who works hard without expecting it to get recognized, and that thing about you, to me, is infinitely beautiful, you are just like a sunflower, infact... you are the prettiest one I have ever seen. (ps: I am sorry for being day late jaanu😅, it took longer than expected🙃)</i></p>
+</section>
+
+<!-- 🌻 VIRTUAL FLOWERS -->
+<section>
+  <h2>These are for you 🌻</h2>
+
+  <p>
+    Since I can’t hand you sunflowers in person today,<br>
+    here’s me giving them to you virtually 💛
+  </p>
+
+  <div class="photos">
+    <img src="Images/download14.jpeg">
+    <img src="Images/download12.jpeg">
+    <img src="Images/Simplesunflower.jpeg">
+  </div>
+</section>
+
+<!-- 🌻 HER PHOTOS -->
+<section>
+  <h2>My favourite sunflower collection 🌻</h2>
+
+  <p>
+    These are my personal favourites.<br><br>
+    Because you’re just as warm, just as bright,<br>
+    and somehow even prettier than a sunflower 🌻💛
+  </p>
+
+  <div class="photos">
+    <img src="Images/Aaliyaimage3.jpeg">
+    <img src="Images/Aaliyaimage1.jpeg">
+
+    <img src="Images/Aaliyaimage2.jpeg">
+  </div>
+</section>
+
+<!-- 💌 TRANSITION -->
+<section>
+  <p>
+    Now that you’ve seen what I wanted to give you today…<br>
+    I have something important to ask you 😌
+  </p>
+
+ <button class="next-btn" onclick="goToQuestion()">
+  Go ahead →
+</button>
+</section>
+</div>
+
+
+<!-- 💖 YES / NO SECTION -->
+<div id="questionPage" class="page">
+<section id="question">
+  <h2>So… I have a question to ask you my muffin 💭</h2>
+
+  <p style="margin-bottom: 40px;">
+    Will you be my Valentine? 🥺💘
+  </p>
+
+  <div class="choice-box">
+    <button id="yesBtn" onclick="explodeSunflowers(this)" class="choice yes">Yes 💖</button>
+    <button id="noBtn" class="choice no">No 🙃</button>
+  </div>
+</section>
+
+<div id="wrongChoice">
+  <div class="wrong-card">
+    <h2>Acha🤨🧐 </h2>
+    <p>
+      That doesn’t seem like the right choice babu…<br>
+      Wapis try karte hai 😁💛
+    </p>
+    <button onclick="closeWrong()">Go back ↩</button>
+  </div>
+</div>
+</div>
+
+<!-- 💛 ROMANTIC PAGE -->
+<div id="romanticPage" class="page">
+
+<div id="hearts-bg"></div>
+
+  <section>
+    <h1>YAYYY, Thank you JAANUU 🌻</h1>
+
+    <p>
+      I didn’t just ask you to be my Valentine for a day.<br><br>
+      I asked because every little moment with you<br>
+      feels warmer, calmer, and happier baby 💛
+    </p>
+
+    <div class="sunflower-big">🌻</div>
+
+    <p>
+      Thank you for choosing me.<br>
+      Today, tomorrow, and all the small days in between.<br>
+      You are my beginning, my middle, and my only end.<br> I love you Jaanu.💝💖
+    </p>
+
+    <div class="divider"></div>
+
+    <p style="font-style: italic;">
+      Happy Valentine’s Day, my cutest muffin 💌
+    </p>
+  </section>
+</div>
+
+<audio id="bgMusic" preload="auto">
+  <source src="Audio/Beginning-middle-end.mp3" type="audio/mpeg">
+</audio>
+
+
+
+<script>
+/* Fade on scroll (FIXED for scrollable pages) */
+function setupFade(page) {
+  const sections = page.querySelectorAll("section");
+
+  const observer = new IntersectionObserver(
+    entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("show");
+        }
+      });
+    },
+    {
+      root: page,          // 👈 IMPORTANT FIX
+      threshold: 0.25
+    }
+  );
+
+  sections.forEach(sec => observer.observe(sec));
+}
+
+
+/* Floating flowers */
+const bg = document.getElementById("flowers-bg");
+
+function createFlower() {
+  const f = document.createElement("div");
+  f.className = "flower";
+  f.innerHTML = Math.random() > 0.5 ? "🌻" : "🌹";
+  f.style.fontSize = 24 + Math.random() * 28 + "px";
+  f.style.left = Math.random() * 100 + "vw";
+  f.style.animationDuration = 14 + Math.random() * 8 + "s";
+  f.style.setProperty("--drift", (Math.random()*200-100)+"px");
+  bg.appendChild(f);
+  setTimeout(() => f.remove(), 30000);
+}
+
+for (let i = 0; i < 7; i++) createFlower();
+setInterval(createFlower, 700);
+
+const noBtn = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
+const wrong = document.getElementById("wrongChoice");
+
+const heartsBg = document.getElementById("hearts-bg");
+
+function createHeart() {
+  const h = document.createElement("div");
+  h.className = "heart";
+  h.innerHTML = "💖";
+  h.style.left = Math.random() * 100 + "vw";
+  h.style.animationDuration = 12 + Math.random() * 6 + "s";
+  h.style.setProperty("--drift", (Math.random()*160-80)+"px");
+
+  heartsBg.appendChild(h);
+
+  setTimeout(() => h.remove(), 25000);
+}
+
+
+// Make NO dodge the cursor
+noBtn.addEventListener("mouseenter", () => {
+  const x = Math.random() * 200 - 100;
+  const y = Math.random() * 80 - 40;
+  noBtn.style.transform = `translate(${x}px, ${y}px)`;
+});
+
+// But still clickable 😈
+noBtn.addEventListener("click", () => {
+vibrateNo();
+  wrong.style.display = "flex";
+});
+
+function closeWrong() {
+  wrong.style.display = "none";
+}
+
+
+function goToQuestion() {
+  document.getElementById("rosePage").classList.remove("active");
+  document.getElementById("questionPage").classList.add("active");
+
+setupFade(questionPage); // ✅ ADD THIS
+
+
+if (bgMusic.paused) {
+    bgMusic.play();
+    fadeVolume(0.4, 2500); // soft fade-in
+  }
+}
+
+
+
+function explodeSunflowers(button) {
+  const rect = button.getBoundingClientRect();
+
+  const explosion = document.createElement("div");
+  explosion.className = "explosion";
+
+  explosion.style.left = rect.left + rect.width / 2 + "px";
+  explosion.style.top = rect.top + rect.height / 2 + "px";
+
+  document.body.appendChild(explosion);
+
+  for (let i = 0; i < 18; i++) {
+    const flower = document.createElement("span");
+    flower.innerHTML = "🌻";
+
+    const angle = Math.random() * 2 * Math.PI;
+    const distance = 80 + Math.random() * 100;
+
+    flower.style.setProperty("--x", Math.cos(angle) * distance + "px");
+    flower.style.setProperty("--y", Math.sin(angle) * distance + "px");
+
+    explosion.appendChild(flower);
+  }
+
+ setTimeout(() => {
+  explosion.remove();
+
+  // 🌸 PAGE TRANSITION
+  document.getElementById("questionPage").classList.remove("active");
+  const romanticPage = document.getElementById("romanticPage");
+  romanticPage.classList.add("active");
+
+setupFade(romanticPage);
+
+ fadeVolume(0.75, 1800);
+
+  // 💕 SHOW hearts + start animation
+  heartsBg.style.display = "block";
+
+  for (let i = 0; i < 12; i++) createHeart();
+  setInterval(createHeart, 900);
+
+}, 1200);
+
+}
+
+const bgMusic = document.getElementById("bgMusic");
+bgMusic.volume = 0;
+
+// Smooth volume fade
+function fadeVolume(target, duration = 2000) {
+  const stepTime = 50;
+  const steps = duration / stepTime;
+  const volumeStep = (target - bgMusic.volume) / steps;
+
+  const fade = setInterval(() => {
+    bgMusic.volume = Math.min(1, Math.max(0, bgMusic.volume + volumeStep));
+
+    if (
+      (volumeStep > 0 && bgMusic.volume >= target) ||
+      (volumeStep < 0 && bgMusic.volume <= target)
+    ) {
+      bgMusic.volume = target;
+      clearInterval(fade);
+    }
+  }, stepTime);
+}
+
+// ✅ INITIALIZE fade for first page
+setupFade(document.getElementById("rosePage"));
+
+function vibrateNo() {
+  if (navigator.vibrate) {
+    navigator.vibrate([40, 30, 40]); // subtle double buzz
+  }
+}
+
+
+</script>
+
+
+</body>
+</html>
